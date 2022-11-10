@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "pgbouncer.fullname" . }}
+  labels:
+    {{- include "pgbouncer.labels" . | nindent 4 }}
+spec:
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "pgbouncer.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "pgbouncer.labels" . | nindent 8 }}
+      annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/secret-env.yaml") . | sha256sum }}
+        {{- if .Values.spec.annotations }}
+        {{- /* Using toJson instead of toYaml due to https://github.com/helm/helm/issues/3470  */ -}}
+        {{- tpl (toJson .Values.spec.annotations) . | fromJson | toYaml |  nindent 8 }}
+        {{- end }}
+    spec:
+      affinity:
+    {{- if gt .Values.replicaCount 1.0 }}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: {{ include "pgbouncer.fullname" . }}
+      {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: pgbouncer
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.env }}
+          env:
+          {{- range $k, $v := .Values.env }}
+            - name: {{ $k | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "pgbouncer.fullname" $ }}-secrets
+                  key: {{ $k | quote }}
+          {{- end }}
+          {{- end }}
+          ports:
+            - name: pgbouncer
+              containerPort: {{ .Values.env.PGBOUNCER_PORT }}
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.env.PGBOUNCER_PORT }}
+            {{- if .Values.readinessProbe }}
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+            {{- end }}
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.env.PGBOUNCER_PORT }}
+            {{- if .Values.livenessProbe }}
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}

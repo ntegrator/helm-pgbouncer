@@ -1,0 +1,10 @@
+apiVersion: v1
+appVersion: '1.17.0'
+description: PgBouncer helm chart for Bitnami docker image
+name: pgbouncer
+icon: https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1985px-Postgresql_elephant.svg.png
+version: 1.0.0
+maintainers:
+  - name: Ruslan Kontarev
+    email: ryslanus@yandex.ru
+
