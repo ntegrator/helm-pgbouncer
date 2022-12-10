@@ -203,6 +203,19 @@ env:
 ## No defaults.
   PGBOUNCER_IGNORE_STARTUP_PARAMETERS: "extra_float_digits"
 
+# PGBOUNCER_CLIENT_TLS_SSLMODE: TLS traffic settings.
+# Check the official PgBouncer documentation (https://www.pgbouncer.org/config.html) for the available values for client_tls_sslmode.
+## Default: disable
+  # PGBOUNCER_CLIENT_TLS_SSLMODE: "require"
+
+# PGBOUNCER_CLIENT_TLS_KEY_FILE: File containing the key for certificate.
+## No defaults.
+  # PGBOUNCER_CLIENT_TLS_KEY_FILE: "/opt/bitnami/pgbouncer/certs/pgbouncer.key"
+
+# PGBOUNCER_CLIENT_TLS_CERT_FILE: File containing the certificate file for the TLS traffic.
+## No defaults.
+  # PGBOUNCER_CLIENT_TLS_CERT_FILE: "/opt/bitnami/pgbouncer/certs/pgbouncer.crt"
+
 # PGBOUNCER_SERVER_IDLE_TIMEOUT: PgBouncer maximum time in seconds a server connection can be idle. If 0 then the timeout is disabled. 
 ## Default: 600
   # PGBOUNCER_SERVER_IDLE_TIMEOUT: ""
@@ -214,6 +227,16 @@ env:
 # PGBOUNCER_STATS_USERS: PgBouncer comma-separated list of database users that are allowed to connect and run read-only queries. 
 ## No defaults.
   # PGBOUNCER_STATS_USERS: ""
+
+# cert:
+#   crt: |-
+#     -----BEGIN CERTIFICATE-----
+#     your_certificate
+#     -----END CERTIFICATE-----
+#   key: |-
+#     -----BEGIN PRIVATE KEY-----
+#     your_private_key
+#     -----END PRIVATE KEY-----
 
 spec:
   labels: {}

@@ -40,6 +40,17 @@ spec:
       containers:
         - name: pgbouncer
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          {{- if .Values.cert }}
+          volumeMounts:
+            - name: crt-volume
+              readOnly: true
+              mountPath: /opt/bitnami/pgbouncer/certs/pgbouncer.crt
+              subPath: pgbouncer.crt
+            - name: key-volume
+              readOnly: true
+              mountPath: /opt/bitnami/pgbouncer/certs/pgbouncer.key
+              subPath: pgbouncer.key
+          {{- end }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.env }}
           env:
@@ -68,3 +79,12 @@ spec:
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+      {{- if .Values.cert }}
+      volumes:
+      - name: crt-volume
+        secret:
+            secretName: {{ include "pgbouncer.fullname" . }}-crt
+      - name: key-volume
+        secret:
+            secretName: {{ include "pgbouncer.fullname" . }}-key
+      {{- end }}
