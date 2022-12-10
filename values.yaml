@@ -48,10 +48,10 @@
 # helm install my-release ./helm-pgbouncer
 
 # ### 5. Change postgres connection string in your application.  
-# Just replace `...postgresql_host:postgresql_port/...` on `...pgbouncer_host:pgbouncer_port/...`  
+# Just replace `...postgresql_host:postgresql_port/...` on `...pgbouncer_host:pgbouncer_port/...?binary_parameters=yes`  
 # Example:  
 #   before - `app_user:mega_password@1.2.3.4:5432/your_app_db`  
-#   after  - `app_user:mega_password@pgbouncer:6432/your_app_db`
+#   after  - `app_user:mega_password@pgbouncer:6432/your_app_db?binary_parameters=yes`
 
 ######################################################
 
